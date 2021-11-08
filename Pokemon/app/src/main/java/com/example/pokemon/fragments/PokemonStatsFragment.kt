@@ -14,7 +14,6 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.example.pokemon.R
 import com.example.pokemon.adapter.StatsAdapter
 import com.example.pokemon.databinding.FragmentPokemonStatsBinding
-import com.example.pokemon.model.GetPokemonResponse
 import com.example.pokemon.model.PokemonsApiResult
 import com.example.pokemon.model.Stats
 import com.example.pokemon.resource.NetworkResource
@@ -22,9 +21,8 @@ import com.example.pokemon.toast
 import com.example.pokemon.viewModel.PokemonStatsViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.InternalCoroutinesApi
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
 
@@ -76,42 +74,40 @@ class PokemonStatsFragment :  Fragment(R.layout.fragment_pokemon_stats) {
         pokemonResult?.let { loadSinglePokemon(it) }
 
     }
-    @InternalCoroutinesApi
-    private fun loadSinglePokemon(pokemonResult: PokemonsApiResult) {
+
+
+    private fun loadSinglePokemon(pokemonsApiResult: PokemonsApiResult) {
 
         lifecycleScope.launch(Dispatchers.Main) {
             delay(300)
+            viewModel.getSinglePokemon(pokemonsApiResult.url).collect{
 
-            viewModel.getSinglePokemon(pokemonResult.url).collect {
-
-                when (it) {
-                    is NetworkResource.Success -> {
-                        binding.progressCircular.isVisible = false
-                        binding.apply {
-                            (it.value.weight.div(10.0).toString() + " kgs").also { weight ->
-                                pokemonItemWeight.text = weight
-                            }
-                            (it.value.height.div(10.0).toString() + " metres").also { height ->
-                                pokemonItemHeight.text = height
-                            }
-                            pokemonStatList.adapter = adapter
-                            adapter.setStats(it.value.stats as ArrayList<Stats>)
+            when(it){
+                is NetworkResource.Success -> {
+                    binding.progressCircular.isVisible = false
+                    binding.apply {
+                        (it.value.weight.div(10.0).toString() + " kgs").also { weight ->
+                            pokemonItemWeight.text = weight
                         }
-                    }
-                    is NetworkResource.Failure -> {
-                        binding.progressCircular.isVisible = false
-                        requireContext().toast("There was an error loading the pokemon")
-                    }
-                    is NetworkResource.Loading -> {
-                        binding.progressCircular.isVisible = true
+                        (it.value.height.div(10.0).toString() + " metres").also { height ->
+                            pokemonItemHeight.text = height
+                        }
+                        pokemonStatList.adapter = adapter
+                        adapter.setStats(it.value.stats as ArrayList<Stats>)
                     }
                 }
-            }
+                is NetworkResource.Failure -> {
+                    binding.progressCircular.isVisible = false
+                    requireContext().toast("There was an error loading the pokemon")
+                }
+                is NetworkResource.Loading -> {
+                    binding.progressCircular.isVisible = true
+                }
+
+            }            }
+
+
         }
     }
-}
-
-private fun <T> Flow<T>.collect(collector: () -> T) {
-
 }
 

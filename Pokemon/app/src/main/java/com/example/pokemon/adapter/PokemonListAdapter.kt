@@ -22,6 +22,7 @@ import com.example.pokemon.R
 import com.example.pokemon.databinding.ListItemPokemonBinding
 import com.example.pokemon.getPicUrl
 import com.example.pokemon.model.Pokemon
+import com.bumptech.glide.request.target.Target
 import com.example.pokemon.model.PokemonsApiResult
 import com.example.pokemon.util.NETWORK_VIEW_TYPE
 import com.example.pokemon.util.PRODUCT_VIEW_TYPE

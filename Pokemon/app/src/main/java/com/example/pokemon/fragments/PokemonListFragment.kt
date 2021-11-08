@@ -1,12 +1,8 @@
 package com.example.pokemon.fragments
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -14,7 +10,6 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.paging.LoadState
-import androidx.paging.PagingData
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -22,7 +17,6 @@ import com.example.pokemon.R
 import com.example.pokemon.adapter.LoadingStateAdapter
 import com.example.pokemon.adapter.PokemonListAdapter
 import com.example.pokemon.databinding.FragmentPokemonListBinding
-import com.example.pokemon.model.Pokemon
 import com.example.pokemon.model.PokemonsApiResult
 import com.example.pokemon.util.PRODUCT_VIEW_TYPE
 import com.example.pokemon.viewModel.PokemonListViewModel
@@ -33,24 +27,28 @@ import kotlinx.coroutines.launch
 import com.example.pokemon.toggle
 
 
+
 @AndroidEntryPoint
 @SuppressLint("ClickableViewAccessibility")
 class PokemonListFragment : Fragment(R.layout.fragment_pokemon_list){
 
     private var hasInitiatedInitialCall = false
     private val viewModel: PokemonListViewModel by viewModels()
-    private lateinit var adapter: PokemonListAdapter
     private lateinit var binding: FragmentPokemonListBinding
     private var job: Job? = null
     private var hasUserSearched = false
 
+    private val adapter =
+        PokemonListAdapter {
+                pokemonResult: PokemonsApiResult, dominantColor: Int, picture: String? ->
+            navigate(
+                pokemonResult,
+                dominantColor,
+                picture
+            )
+        }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_pokemon_list, container, false)
-    }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -69,6 +67,7 @@ class PokemonListFragment : Fragment(R.layout.fragment_pokemon_list){
         }
 
     }
+
 
 
 
@@ -105,7 +104,7 @@ class PokemonListFragment : Fragment(R.layout.fragment_pokemon_list){
             }
         })
 
-
+    hasInitiatedInitialCall = true
 
 
         adapter.addLoadStateListener { loadState ->
@@ -164,10 +163,6 @@ class PokemonListFragment : Fragment(R.layout.fragment_pokemon_list){
                 )
             )
     }
-
-
-
-
 
 
 }
