@@ -53,7 +53,7 @@ class StatsAdapter :
                 mProgress.secondaryProgress = MAX_BASE_STATE
                 mProgress.max = MAX_BASE_STATE
 
-                //The increment animation on progress bar is achieved by this.
+
                 CoroutineScope(Dispatchers.Main).launch {
                     var state = 0
                     while (state <= stat.base_stat) {

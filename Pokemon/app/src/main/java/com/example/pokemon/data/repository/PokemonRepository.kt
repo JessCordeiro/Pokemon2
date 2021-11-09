@@ -10,10 +10,10 @@ import javax.inject.Singleton
 @Singleton
 class PokemonRepository @Inject constructor(private val pokemonService: PokemonService) : BaseRepository(){
 
-    fun getPokemon(searchString: String?) = Pager(
+      fun getPokemon() = Pager(
         config = PagingConfig(enablePlaceholders = false, pageSize= 25),
         pagingSourceFactory = {
-            PokemonDataSource(pokemonService, searchString)
+            PokemonDataSource(pokemonService)
         }
     ).flow
 

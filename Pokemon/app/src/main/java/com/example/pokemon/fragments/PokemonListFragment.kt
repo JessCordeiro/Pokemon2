@@ -18,6 +18,7 @@ import com.example.pokemon.adapter.LoadingStateAdapter
 import com.example.pokemon.adapter.PokemonListAdapter
 import com.example.pokemon.databinding.FragmentPokemonListBinding
 import com.example.pokemon.model.PokemonsApiResult
+import com.example.pokemon.resource.NetworkResource
 import com.example.pokemon.util.PRODUCT_VIEW_TYPE
 import com.example.pokemon.viewModel.PokemonListViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -25,7 +26,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import com.example.pokemon.toggle
-
+import kotlinx.coroutines.flow.collectLatest
 
 
 @AndroidEntryPoint
@@ -36,7 +37,7 @@ class PokemonListFragment : Fragment(R.layout.fragment_pokemon_list){
     private val viewModel: PokemonListViewModel by viewModels()
     private lateinit var binding: FragmentPokemonListBinding
     private var job: Job? = null
-    private var hasUserSearched = false
+
 
     private val adapter =
         PokemonListAdapter {
@@ -56,7 +57,8 @@ class PokemonListFragment : Fragment(R.layout.fragment_pokemon_list){
         binding = FragmentPokemonListBinding.bind(view)
 
         setAdapter()
-
+        setRefresh()
+        teste()
 
         binding.scrollUp.setOnClickListener {
             lifecycleScope.launch {
@@ -68,7 +70,20 @@ class PokemonListFragment : Fragment(R.layout.fragment_pokemon_list){
 
     }
 
+    private fun setRefresh(){
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            teste()
+        }
+    }
 
+        private fun teste(){
+
+            job = lifecycleScope.launch{
+                viewModel.getPokemons().collectLatest {
+                 adapter.submitData(it)
+                }
+            }
+        }
 
 
     private fun setAdapter() {

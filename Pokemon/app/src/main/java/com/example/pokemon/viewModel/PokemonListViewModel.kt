@@ -11,6 +11,7 @@ import com.example.pokemon.model.Pokemon
 import com.example.pokemon.model.PokemonsApiResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -21,11 +22,12 @@ class PokemonListViewModel @Inject constructor(private val pokemonRepository: Po
 
     private var currentResult: Flow<PagingData<PokemonsApiResult>>? = null
 
-    fun getPokemons(searchString:String?):Flow<PagingData<PokemonsApiResult>>{
+     fun getPokemons():Flow<PagingData<PokemonsApiResult>>{
         val newResult: Flow<PagingData<PokemonsApiResult>> =
-        pokemonRepository.getPokemon(searchString).cachedIn(viewModelScope)
+        pokemonRepository.getPokemon().cachedIn(viewModelScope)
         currentResult = newResult
         return newResult
+         //viewModelScope.launch {  }
     }
 
 

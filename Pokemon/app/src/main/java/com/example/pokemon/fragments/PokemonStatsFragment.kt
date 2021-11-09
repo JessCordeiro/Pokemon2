@@ -63,7 +63,7 @@ class PokemonStatsFragment :  Fragment(R.layout.fragment_pokemon_stats) {
             binding.root.findNavController().navigateUp()
         }
 
-        //load pic
+
         binding.apply {
             Glide.with(root)
                 .load(picture)

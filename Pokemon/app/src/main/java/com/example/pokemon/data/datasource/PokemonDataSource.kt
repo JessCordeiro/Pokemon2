@@ -8,7 +8,7 @@ import com.example.pokemon.model.PokemonsApiResult
 import com.example.pokemon.util.STARTING_OFFSET_INDEX
 import java.io.IOException
 
-class PokemonDataSource(private val pokemonService: PokemonService, private val searchString: String?):
+class PokemonDataSource(private val pokemonService: PokemonService):
 PagingSource<Int, PokemonsApiResult>()
 {
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, PokemonsApiResult> {
@@ -16,7 +16,7 @@ PagingSource<Int, PokemonsApiResult>()
 
 
         return try {
-            val response = pokemonService.listPokemons(offset)
+            val response = pokemonService.listPokemons(20)
             val pagedResponse =  response.body()
             val data = pagedResponse?.results
 
