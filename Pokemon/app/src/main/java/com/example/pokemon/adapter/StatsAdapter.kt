@@ -54,14 +54,14 @@ class StatsAdapter :
                 mProgress.max = MAX_BASE_STATE
 
 
-                CoroutineScope(Dispatchers.Main).launch {
-                    var state = 0
-                    while (state <= stat.base_stat) {
-                        mProgress.progress = state
-                        state++
-                        delay(10)
-                    }
-                }
+                //CoroutineScope(Dispatchers.Main).launch {
+                 //   var state = 0
+                  //  while (state <= stat.base_stat) {
+                  //      mProgress.progress = state
+                  //      state++
+                   //     delay(10)
+                   // }
+               // }
 
                 statName.text = stat.stat.name.capitalize()
 

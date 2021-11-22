@@ -9,6 +9,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
+import androidx.lifecycle.Lifecycle
+import androidx.paging.PagingData
 import androidx.paging.PagingDataAdapter
 import androidx.palette.graphics.Palette
 import androidx.recyclerview.widget.DiffUtil
@@ -24,6 +26,7 @@ import com.example.pokemon.getPicUrl
 import com.example.pokemon.model.Pokemon
 import com.bumptech.glide.request.target.Target
 import com.example.pokemon.model.PokemonsApiResult
+import com.example.pokemon.resource.Resource
 import com.example.pokemon.util.NETWORK_VIEW_TYPE
 import com.example.pokemon.util.PRODUCT_VIEW_TYPE
 
@@ -141,7 +144,6 @@ class PokemonListAdapter(
             PRODUCT_VIEW_TYPE
         }
     }
-
 
 
 

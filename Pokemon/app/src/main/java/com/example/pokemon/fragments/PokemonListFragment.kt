@@ -10,6 +10,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.paging.LoadState
+import androidx.paging.PagingData
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -18,7 +19,9 @@ import com.example.pokemon.adapter.LoadingStateAdapter
 import com.example.pokemon.adapter.PokemonListAdapter
 import com.example.pokemon.databinding.FragmentPokemonListBinding
 import com.example.pokemon.model.PokemonsApiResult
-import com.example.pokemon.resource.NetworkResource
+import com.example.pokemon.resource.Resource
+
+import com.example.pokemon.toast
 import com.example.pokemon.util.PRODUCT_VIEW_TYPE
 import com.example.pokemon.viewModel.PokemonListViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -26,7 +29,10 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import com.example.pokemon.toggle
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.job
+import java.util.Arrays.toString
+import java.util.Objects.toString
 
 
 @AndroidEntryPoint
@@ -56,9 +62,12 @@ class PokemonListFragment : Fragment(R.layout.fragment_pokemon_list){
 
         binding = FragmentPokemonListBinding.bind(view)
 
+        //viewModel.getPokemons()
         setAdapter()
         setRefresh()
-        teste()
+        observer()
+
+
 
         binding.scrollUp.setOnClickListener {
             lifecycleScope.launch {
@@ -70,20 +79,73 @@ class PokemonListFragment : Fragment(R.layout.fragment_pokemon_list){
 
     }
 
-    private fun setRefresh(){
+    fun setRefresh(){
         binding.swipeRefreshLayout.setOnRefreshListener {
-            teste()
+            observer()
         }
     }
 
-        private fun teste(){
+//     private fun observer(){
+//        lifecycleScope.launchWhenStarted {
+//            viewModel.pokemonFlow?.collect {
+//                adapter.submitData(it)
+//            }
+//
+//        }
+//    }
 
-            job = lifecycleScope.launch{
-                viewModel.getPokemons().collectLatest {
-                 adapter.submitData(it)
+//    private fun observer(){
+//       lifecycleScope.launchWhenStarted{
+//            viewModel.getPokemons()?.collect(){
+//                adapter.submitData(it)
+//                when(it){
+//                    is Resource.Success<*> ->{
+//
+//                    }
+//                }
+//            }
+//
+//        }
+//    }
+
+    private fun observer(){
+
+        viewModel.getPokemons()
+        lifecycleScope.launchWhenStarted{
+            viewModel.pokemonFlow?.collect(){
+                when(it){
+                     is Resource.Loading -> {
+                        binding.progressCircular.isVisible = true
+                    }
+
+                    is Resource.Success -> {
+                        binding.progressCircular.isVisible = false
+                        adapter.submitData(it.data)
+
+                    }
+
+                    is Resource.Failure -> {
+                        binding.progressCircular.isVisible = false
+                        requireContext().toast("There was an error loading the pokemon")
+                    }
                 }
+
             }
         }
+
+    }
+
+
+
+
+    // private fun teste(){
+
+           // job = lifecycleScope.launch{
+            //    viewModel.getPokemons().collectLatest {
+              //   adapter.submitData(it)
+             //   }
+           // }
+       // }
 
 
     private fun setAdapter() {
